@@ -1,64 +1,48 @@
-const addInput = document.querySelector('input')
+const todoInput = document.querySelector('input')
 const list = document.querySelector('ul')
+const todoInfo = document.querySelector('.todoInfo')
+const underLines = document.querySelector('.underLines')
+const itemNumber = document.querySelector('.itemNumber')
 
 const todoList = [{
     value: 'hello',
     id: Date.now(),
-    status: true
+    done: false
 }]
 
 const deleteTodoItem = ({target:{parentElement}}) => {
-    const index = todoList.findIndex(elem => {
-        return elem.id == parentElement.dataset.todoId
+    const index = todoList.findIndex(elem => elem.id === +parentElement.dataset.todoId);
     
-    });
-
     if (index !== -1) {
         todoList.splice(index, 1);
-        render()
     }
+    todoInfoToggle()
+    itemRender()
 }
 
 const addTodoItem = () =>{
-    if(addInput.value.trim() == ''){
-        addInput.value = ''
+    const itemValue = todoInput.value.trim()
+
+    if(!itemValue){
+        todoInput.value = ''
         return
     }
     todoList.push({
-        value: addInput.value.trim(),
+        value: itemValue,
         id: Date.now(),
-        status: true
+        done: false
     })
-    render()
+    todoInfoToggle()
+    itemRender()
 }
 
-const render = () => {
+const itemRender = () => {
     list.innerText = ''
-    const todoInfo = document.createElement('div')
-    const allBtn = document.createElement('button')
-    const activeBtn = document.createElement('button')
-    const completedBtn = document.createElement('button')
-    const btnInfoWrapper = document.createElement('div')
-    const itemNumber = document.createElement('p')
-
-    if(todoList.length == 1){
-        itemNumber.textContent = `${todoList.length} item left`
-    }else{
-        itemNumber.textContent = `${todoList.length} items left`
-    }
-
-    btnInfoWrapper.classList.add('btnInfoWrapper')
-    allBtn.classList.add('button')
-    activeBtn.classList.add('button')
-    completedBtn.classList.add('button')
-    allBtn.innerText = 'All'
-    activeBtn.textContent = 'Active'
-    completedBtn.textContent = 'Completed'
 
     todoList.forEach( elem => {
         const li = document.createElement('li')
-        const delBtn = document.createElement('div')
-        const label = document.createElement('label')
+        const delBtn = document.createElement('button')
+        const label = document.createElement('div')
         const checkInput = document.createElement('input')
         const checkmark = document.createElement('span')
 
@@ -68,11 +52,11 @@ const render = () => {
         
         li.dataset.todoId = elem.id
 
-        checkInput.addEventListener('change', statusToggle)
+        checkmark.addEventListener('click', statusToggle)
         
-        if(elem.status){
+        if(!elem.done){
             label.classList.add('active')
-        } else{
+        } else { 
             label.classList.add('notActive')
             checkInput.setAttribute('checked', 'checked')
         }
@@ -86,32 +70,38 @@ const render = () => {
         list.append(li) 
     })    
 
-    todoInfo.classList.add('todoInfo')
-
-    if(!todoList.length){
-        todoInfo.classList.add('todoInfoHide')
-    } 
-
-    btnInfoWrapper.append(allBtn, activeBtn, completedBtn)
-    todoInfo.append(itemNumber,btnInfoWrapper)
-    list.append(todoInfo)
-
-    addInput.value = ''
+    todoInput.value = ''
 }
 
 const statusToggle = ({target:{parentElement:{parentElement}}}) => {
     todoList.forEach( item => {
-        if(parentElement.dataset.todoId == item.id){
-            item.status = !item.status
+        if(+parentElement.dataset.todoId === item.id){
+            item.done = !item.done
         }
-        render()
+        itemRender()
     })   
 }
 
-addInput.addEventListener('keydown', (keyPressed) => {
+todoInput.addEventListener('keydown', (keyPressed) => {
     if (keyPressed.key === 'Enter') {
         addTodoItem() 
     }
 })
 
-render()
+const todoInfoToggle = () => {
+    if(todoList.length === 1){
+        itemNumber.textContent = `${todoList.length} item left`
+    }else{
+        itemNumber.textContent = `${todoList.length} items left`
+    }
+
+    if(!todoList.length){
+        todoInfo.classList.add('todoInfoHide')
+        underLines.classList.add('underLinesHide')
+    } else {
+        todoInfo.classList.remove('todoInfoHide')
+        underLines.classList.remove('underLinesHide')
+    }
+}
+todoInfoToggle()
+itemRender()
