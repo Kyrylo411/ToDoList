@@ -10,36 +10,35 @@ let todoList = [{
     done: false
 }]
 
-const delTodoItem = ({target:{parentElement}}) => {
-    const index = todoList.findIndex(elem => elem.id === +parentElement.dataset.todoId);
-    
-    if (index !== -1) {
-        todoList.splice(index, 1);
-    }
-    setTodoList(todoList)
+const delTodoItem = (todoId) => {
+    const newTodoList = todoList.filter(elem => elem.id !== +todoId)
+    setTodoList(newTodoList)
 }
 
-const addTodoItem = () =>{
-    const itemValue = todoInput.value.trim()
-
-    if(!itemValue){
-        todoInput.value = ''
-        return
-    }
-    todoList.push({
+const addTodoItem = (itemValue, newTodoList) =>{
+    newTodoList.push({
         value: itemValue,
         id: Date.now(),
         done: false
     })
+    setTodoList(newTodoList)
+}
+
+const changeItemStatus = (id, status) => {
+    todoList.map( item => {
+        if(id === item.id){
+            return item.done = status          
+        } 
+    })
     setTodoList(todoList)
 }
 
-const itemRender = (newTodoList = todoList ) => {
+const itemRender = () => {
     list.innerText = ''
 
-    newTodoList.forEach( elem => {
+    todoList.forEach( elem => {
         const li = document.createElement('li')
-        const delBtn = document.createElement('button')
+        const delBtn = document.createElement('div')
         const label = document.createElement('label')
         const checkInput = document.createElement('input')
         const checkmark = document.createElement('span')
@@ -52,7 +51,12 @@ const itemRender = (newTodoList = todoList ) => {
         
         li.dataset.todoId = elem.id
 
-        checkInput.addEventListener('change', changeItemStatus)
+        checkInput.addEventListener('change',(e) => {
+            const id = +e.target.parentElement.parentElement.dataset.todoId
+            const status = e.target.checked
+            changeItemStatus(id, status)
+        } 
+        )
         
         if(!elem.done){
             itemText.classList.add('active')
@@ -62,7 +66,7 @@ const itemRender = (newTodoList = todoList ) => {
         }
 
         delBtn.classList.add('delBtn')
-        delBtn.addEventListener('click', delTodoItem)
+        delBtn.addEventListener('click', ({target:{parentElement:{dataset:{todoId}}}}) => delTodoItem(todoId) )
 
         itemText.textContent = elem.value
         label.append(checkInput, checkmark)
@@ -73,19 +77,17 @@ const itemRender = (newTodoList = todoList ) => {
     todoInput.value = ''
 }
 
-const changeItemStatus = ({target:{parentElement:{parentElement}}}) => {
-    todoList.forEach( item => {
-        if(+parentElement.dataset.todoId === item.id){
-            item.done = !item.done
-            console.log(todoList)
-        }
-        setTodoList(todoList)
-    })   
-}
-
 todoInput.addEventListener('keydown', (keyPressed) => {
+    const itemValue = todoInput.value.trim()
+    const newTodoList = todoList.slice() // не уверен, нужно это или нет. Так я создаю независимый массив и не мутирую исходный.
+    
+    if(!itemValue){
+        todoInput.value = ''
+        return
+    }
+
     if (keyPressed.key === 'Enter') {
-        addTodoItem() 
+        addTodoItem(itemValue, newTodoList) 
     }
 })
 
@@ -107,8 +109,16 @@ const showTodoInfo = () => {
 
 const setTodoList = newTodoList => {
     todoList = newTodoList
-    itemRender(newTodoList)
+    itemRender()
+
     showTodoInfo()
 }
 
 setTodoList(todoList)
+
+
+// 1. setTodoList
+// 2. checkbox checked
+// 3. delete, add функции переделай так, чтобы в них передавалась информация, которая относится к их предназначению, т. е. для удаления это будет id, а для добавление label. Также убери логику, которая не относится к тому, для чего они предназначены, т. е. какие-то проверки и т. п.
+// Это нужно сделать, потому что каждая функция не должна ничего большего делать, кроме того, что ожидается
+// Проверки, вытаскивание айди из ивента ты можешь делать в самих обработчиках

@@ -54,7 +54,12 @@ li{
     text-align: left;
 }
 
-li:hover button{
+li:hover .delBtn{
+    opacity: 0.4;
+}
+
+.delBtn{
+    opacity: 0;
     background-image: url('./icons/clear.png');
     background-size: 100%;
     background-position: center;
@@ -62,12 +67,16 @@ li:hover button{
     cursor: pointer;
     width: 15px;
     height: 15px;   
-    opacity: 1;
     position: absolute;
     right: 20px;
     border: none;
     background-color: inherit;
 }
+
+li:hover .delBtn:hover{
+    opacity: 1;
+}
+
 
 .todoInfo{
     width: inherit;
@@ -145,10 +154,6 @@ li:hover button{
     position: absolute;
     left: 60px;
     font-size: 25px;
-}
-
-.delBtn{
-    opacity: 0;
 }
 
 .active{
