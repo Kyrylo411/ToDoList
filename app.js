@@ -4,20 +4,19 @@ const todoInfo = document.querySelector('.todoInfo')
 const underLines = document.querySelector('.underLines')
 const itemNumber = document.querySelector('.itemNumber')
 
-const todoList = [{
+let todoList = [{
     value: 'hello',
     id: Date.now(),
     done: false
 }]
 
-const deleteTodoItem = ({target:{parentElement}}) => {
+const delTodoItem = ({target:{parentElement}}) => {
     const index = todoList.findIndex(elem => elem.id === +parentElement.dataset.todoId);
     
     if (index !== -1) {
         todoList.splice(index, 1);
     }
-    todoInfoToggle()
-    itemRender()
+    setTodoList(todoList)
 }
 
 const addTodoItem = () =>{
@@ -32,53 +31,55 @@ const addTodoItem = () =>{
         id: Date.now(),
         done: false
     })
-    todoInfoToggle()
-    itemRender()
+    setTodoList(todoList)
 }
 
-const itemRender = () => {
+const itemRender = (newTodoList = todoList ) => {
     list.innerText = ''
 
-    todoList.forEach( elem => {
+    newTodoList.forEach( elem => {
         const li = document.createElement('li')
         const delBtn = document.createElement('button')
-        const label = document.createElement('div')
+        const label = document.createElement('label')
         const checkInput = document.createElement('input')
         const checkmark = document.createElement('span')
+        const itemText = document.createElement('p')
 
+        itemText.classList.add('itemText')
         checkInput.setAttribute('type', 'checkBox')
         label.classList.add('container')
         checkmark.classList.add('checkmark')
         
         li.dataset.todoId = elem.id
 
-        checkmark.addEventListener('click', statusToggle)
+        checkInput.addEventListener('change', changeItemStatus)
         
         if(!elem.done){
-            label.classList.add('active')
+            itemText.classList.add('active')
         } else { 
-            label.classList.add('notActive')
             checkInput.setAttribute('checked', 'checked')
+            itemText.classList.add('notActive')
         }
 
         delBtn.classList.add('delBtn')
-        delBtn.addEventListener('click', deleteTodoItem)
+        delBtn.addEventListener('click', delTodoItem)
 
-        label.textContent = elem.value
+        itemText.textContent = elem.value
         label.append(checkInput, checkmark)
-        li.append(label,delBtn)
+        li.append(label,itemText,delBtn)
         list.append(li) 
     })    
 
     todoInput.value = ''
 }
 
-const statusToggle = ({target:{parentElement:{parentElement}}}) => {
+const changeItemStatus = ({target:{parentElement:{parentElement}}}) => {
     todoList.forEach( item => {
         if(+parentElement.dataset.todoId === item.id){
             item.done = !item.done
+            console.log(todoList)
         }
-        itemRender()
+        setTodoList(todoList)
     })   
 }
 
@@ -88,7 +89,7 @@ todoInput.addEventListener('keydown', (keyPressed) => {
     }
 })
 
-const todoInfoToggle = () => {
+const showTodoInfo = () => {
     if(todoList.length === 1){
         itemNumber.textContent = `${todoList.length} item left`
     }else{
@@ -103,5 +104,11 @@ const todoInfoToggle = () => {
         underLines.classList.remove('underLinesHide')
     }
 }
-todoInfoToggle()
-itemRender()
+
+const setTodoList = newTodoList => {
+    todoList = newTodoList
+    itemRender(newTodoList)
+    showTodoInfo()
+}
+
+setTodoList(todoList)

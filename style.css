@@ -100,7 +100,7 @@ li:hover button{
 }
 
 .firstLine{
-    width: 99%;
+    width: 99.5%;
     height: 3px;
     border-bottom: 1px solid rgba(128, 128, 128, 0.253);
     background-color: #fff;
@@ -160,25 +160,9 @@ li:hover button{
     text-decoration: line-through;
 }
 
-
-
-.notChecked{
-    width: 25px;
-    height: 25px;
-    border: 1px solid rgba(128, 128, 128, 0.438);
-    border-radius: 50%;
-    position: absolute;
-    left: 10px;
+.itemText{
+    margin: 0 20px;
 }
-.checked{
-    border: 1px solid rgba(15, 177, 15, 0.5);
-    background-image: url('./icons/tick.png');
-    background-size: 15px 15px;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-
 /* custom checkBox */
 
 /* The container label */
@@ -188,6 +172,8 @@ li:hover button{
     padding-left: 35px;
     font-size: 22px;
     left: 10px;
+    bottom: 13px;
+    
 }
 
 /*hide default checkbox*/
@@ -209,7 +195,6 @@ li:hover button{
     background-color: #fff;
     border: 1px solid rgba(128, 128, 128, 0.329);
     border-radius: 50%;
-    margin-right: 20px;
     cursor: pointer;
 }
 
