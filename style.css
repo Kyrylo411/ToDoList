@@ -101,6 +101,9 @@ li:hover .delBtn{
     border: none;
     background-color: inherit;
 }
+.delBtnHide{
+    visibility: hidden;
+}
 
 li:hover .delBtn:hover{
     opacity: 1;
@@ -108,17 +111,32 @@ li:hover .delBtn:hover{
 
 .itemInput{
     display: none;
-}
-
-.itemInputVisible{
-    display: initial;
-    width: 300px;
-    height: 90%;
+    width: 90%;
+    height: 92%;
     border: none;
     outline: none;
     font-size: 20px;
     position: absolute;
     left: 50px;
+    font-size: 18px;
+    box-shadow: inset 0 -1px 5px 0 rgb(0 0 0 / 20%);
+    border: 1px solid gray;
+
+    /* font-style: inherit; */
+}
+
+.itemInputWrapper{
+    height: inherit;
+    width: 99%;
+    position: absolute;
+    top: 0;
+    z-index: 0;
+       /* background-color: red; */
+}
+
+.itemInputVisible{
+    display: initial;   
+
 }
 
 .todoInfo{
@@ -148,12 +166,11 @@ li:hover .delBtn:hover{
     position: absolute;
     right: 10px;
     border-bottom: 1px solid transparent;
-    opacity: 0;
-
+    display: none;
 }
 
 .clearCompleatedBtnVisible{
-    opacity: 1;
+    display: initial;
 }
 
 .clearCompleatedBtn:hover{
@@ -242,7 +259,11 @@ li:hover .delBtn:hover{
     font-size: 22px;
     left: 10px;
     bottom: 13px;
-    
+    z-index: 10;    
+}
+
+.containerHide{
+    visibility: hidden;
 }
 
 /*hide default checkbox*/

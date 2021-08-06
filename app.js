@@ -12,6 +12,8 @@ let todoList = [{
     done: false
 }]
 
+
+
 const deleteTodoItem = (todoId) => {
     setTodoList(todoList.filter(elem => elem.id !== +todoId))
 }
@@ -34,28 +36,30 @@ const changeItemStatus = (id, status) => {
 const itemRender = () => {
     list.innerText = ''
 
-    todoList.forEach( elem => {
+    todoList.forEach( item => {
         const li = document.createElement('li')
         const delBtn = document.createElement('div')
         const label = document.createElement('label')
         const checkInput = document.createElement('input')
         const checkmark = document.createElement('span')
         const itemText = document.createElement('p')
+        const itemInputWrapper = document.createElement('div')
         const itemInput = document.createElement('input')
 
+        itemInputWrapper.classList.add('itemInputWrapper')
         itemInput.classList.add('itemInput')
         itemText.classList.add('itemText')
         checkInput.setAttribute('type', 'checkBox')
         label.classList.add('container')
         checkmark.classList.add('checkmark')
         
-        li.dataset.todoId = elem.id
+        li.dataset.todoId = item.id
        
     
-        const editItem = editItemClosure(itemInput)
+        const editingTodoItem = editingItemClosure(itemInput, label, delBtn)
 
         li.addEventListener('click',() => {
-            editItem()
+            editingTodoItem()
         })
 
         checkInput.addEventListener('change',(e) => {
@@ -64,7 +68,7 @@ const itemRender = () => {
             changeItemStatus(id, status)
         })
         
-        if(!elem.done){
+        if(!item.done){
             itemText.classList.add('active')
         } else { 
             checkInput.setAttribute('checked', 'checked')
@@ -73,37 +77,64 @@ const itemRender = () => {
 
         delBtn.classList.add('delBtn')
         delBtn.addEventListener('click', ({target:{parentElement:{dataset:{todoId}}}}) => deleteTodoItem(todoId) )
-
-        itemText.textContent = elem.value
+        itemInputWrapper.append(itemInput)
+        itemText.textContent = item.value
+        itemInput.value = item.value
         label.append(checkInput, checkmark)
-        li.append(label,itemText,itemInput,delBtn)
+        li.append(label,itemText,itemInputWrapper,delBtn)
         list.append(li) 
     })    
 
     todoInput.value = ''
 }
 
-const editItemClosure = (input) => {    // редактирование созданного item по клику.С этим пунктом я еще не закончил .Не знаю как правильно называть замыкание
+const editingItemClosure = (input, label, delBtn) => {    
     let lastClick = 0
     return () => {
-
         input.addEventListener('click', (e)=>{
             e.stopPropagation()
         }) 
 
+        input.addEventListener('to', (e)=>{
+            // console.log(e)
+            if(input.contains(e.target)){
+                console.log(input.contains(e.target))
+            }
+        })
+
+        input.addEventListener('keydown', keyPressed => {
+            const itemValue = input.value.trim()
+            const parentId = +input.parentElement.parentElement.dataset.todoId
+            
+            if (keyPressed.key === 'Enter') {
+                const newTodoList = todoList.map(item => parentId === item.id ? {...item, value: itemValue} : item)
+                setTodoList(newTodoList)
+            }
+        })      
+
+        let isDblClick 
         const d = Date.now();
 
-        if(d - lastClick < 400) {
-            input.classList.add('itemInputVisible')    
+       
+
+        d - lastClick < 400 ? isDblClick = true : isDblClick = false
+        
+        if(isDblClick){
+            label.classList.add('containerHide')
+            delBtn.classList.add('delBtnHide')
+            input.classList.add('itemInputVisible')
         } else {
+            label.classList.remove('containerHide')
+            delBtn.classList.remove('delBtnHide')
             input.classList.remove('itemInputVisible')
         }
-        lastClick = d;
-     } 
+
+        input.focus()
+        lastClick = d;   
+    } 
 }
 
-
-todoInput.addEventListener('keydown', (keyPressed) => {
+todoInput.addEventListener('keydown', keyPressed => {
     const itemValue = todoInput.value.trim()
       
     if(!itemValue){
@@ -116,87 +147,56 @@ todoInput.addEventListener('keydown', (keyPressed) => {
     }
 })
 
-const clearCompleated = () => { // очистка всех выполненых задач 
-    const checkedItems = []
-    todoList.map(item=>{
-       if(item.done === false){
-            return checkedItems.push(item)
-        }
-    })
-
-    setTodoList(checkedItems)
+const clearCompleated = () => { 
+    const uncheckedItems = todoList.filter(item => item.done === false)
+    setTodoList(uncheckedItems)
 }
 
 const updateClearBtn = () => {
-    const someItemStatus = todoList.some(item=>{
-        return item.done === true
-    })
+    const isChecked = todoList.some(item => item.done === true)
 
-    if(someItemStatus){
-        clearBtn.classList.add('clearCompleatedBtnVisible')
-    } else {
-        clearBtn.classList.remove('clearCompleatedBtnVisible')
-    }
+    clearBtn.classList.add("clearCompleatedBtn");
+    clearBtn.classList[isChecked ? "add" : "remove"]("clearCompleatedBtnVisible");
 }
 
 clearBtn.addEventListener('click', clearCompleated)
 
 
-inputArrow.addEventListener('click', ()=>{  // изменение статуса всех items по клику. Нужно немного доделать
-    const allItemsStatus = todoList.every(item => {
+inputArrow.addEventListener('click', ()=>{      
+    const isCheckedAllItems = todoList.every(item => {
        return item.done === true
     })
-    changeAllItemsStatus(allItemsStatus)
-    changeInputArrowColor(allItemsStatus)
+
+    changeAllItemsStatus(isCheckedAllItems)
+    changeInputArrowColor(isCheckedAllItems)
     
 })
 
-const changeAllItemsStatus = (allItemsStatus) => {
-    let newTodoList
-
-    if(allItemsStatus){        
-        newTodoList = todoList.map(item => {
-            return {...item, done: false}
-        })
-    } else {
-        newTodoList = todoList.map(item => {
-           return {...item, done: true}
-        })
-    }
+const changeAllItemsStatus = (isCheckedAllItems) => {
+    const newTodoList = todoList.map(item => {
+        return isCheckedAllItems ? {...item, done: false} : {...item, done: true}
+    })
     setTodoList(newTodoList)
 }
 
-const changeInputArrowColor = allItemsStatus => {
-    
-    if(allItemsStatus){
-        inputArrow.classList.remove('arrowDark') 
-    } else {
-        inputArrow.classList.add('arrowDark')
-    }
+const changeInputArrowColor = isCheckedAllItems => {
+    inputArrow.classList[isCheckedAllItems ? 'remove': 'add']('arrowDark')
 }
 
-const updateTodoInfo = () => {
-    if(todoList.length === 1){
-        itemNumber.textContent = `${todoList.length} item left`
-    }else{
-        itemNumber.textContent = `${todoList.length} items left`
-    }
-
+const updateTodoInfo = () => {   
     if(!todoList.length){
+        itemNumber.textContent = `${todoList.length} items left`
         todoInfo.classList.add('todoInfoHide')
         underLines.classList.add('underLinesHide')
     } else {
+        itemNumber.textContent = `${todoList.length} item left`
         todoInfo.classList.remove('todoInfoHide')
         underLines.classList.remove('underLinesHide')
     }
 }
 
 const updateInputArrow = () => {
-    if(todoList.length){
-        inputArrow.classList.add('arrowVisible')
-    } else{
-        inputArrow.classList.remove('arrowVisible') 
-    }
+    inputArrow.classList[todoList.length ? 'add':'remove']('arrowVisible')
 }
 
 const setTodoList = newTodoList => {
