@@ -10,11 +10,14 @@
 <body>
     <h1>todos</h1>
     <div class="todoWrapper">
-        <input
-            type="text"
-            id="input"
-            placeholder="What needs to be done?"
-        >
+        <div class="inputWrapper">
+            <div class="arrow">❯</div>
+            <input
+                type="text"
+                id="input"
+                placeholder="What needs to be done?"
+            >
+        </div>
         <ul class="todoList">
 
         </ul>
@@ -26,6 +29,7 @@
                 <button class="button">Active</button>
                 <button class="button">Completed</button>
             </div>
+            <button class="clearCompleatedBtn">Clear compleated</button>
         </div>
     </div>
     <div class="underLines">

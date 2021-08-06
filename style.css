@@ -22,18 +22,47 @@ h1{
     font-weight: lighter;
 }
 
+.inputWrapper{
+    display: flex;
+    width: inherit;
+    border-bottom: 2px solid rgba(128, 128, 128, 0.137);
+    justify-content: center;
+    align-items: center;
+}
+
 #input{
     width: inherit;
     height: 50px;
     border: none;
     outline: none;
     font-size: 20px;
-    border-bottom: 2px solid rgba(128, 128, 128, 0.137);
-    padding-left: 30px;
 }
+
 #input::placeholder{
     color: rgba(128, 128, 128, 0.301);
     font-style: oblique;
+}
+
+.arrow{
+	font-size: 22px;
+	color: #e6e6e6;
+    width: 60px;
+	height: 34px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+    opacity: 0;
+}
+
+.arrowVisible{
+    opacity: 1;
+}
+.arrowDark{
+    color:#737373;
 }
 
 ul{
@@ -77,6 +106,20 @@ li:hover .delBtn:hover{
     opacity: 1;
 }
 
+.itemInput{
+    display: none;
+}
+
+.itemInputVisible{
+    display: initial;
+    width: 300px;
+    height: 90%;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    position: absolute;
+    left: 50px;
+}
 
 .todoInfo{
     width: inherit;
@@ -96,32 +139,27 @@ li:hover .delBtn:hover{
     margin-left: 20px;
 }
 
-.underLines{
-    width: 490px;
-    height: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.clearCompleatedBtn{
+    height: 16px;
+    border: none;
+    background-color: inherit;
+    border: 1px solid transparent;
+    outline: none;
+    position: absolute;
+    right: 10px;
+    border-bottom: 1px solid transparent;
+    opacity: 0;
+
 }
 
-.underLinesHide{
-    display: none;
+.clearCompleatedBtnVisible{
+    opacity: 1;
 }
 
-.firstLine{
-    width: 99.5%;
-    height: 3px;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.253);
-    background-color: #fff;
+.clearCompleatedBtn:hover{
+    cursor: pointer;
+    border-bottom: 1px solid gray;
 }
-
-.secondLine{
-    width: 98%;
-    height: 3px;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.253);
-    background-color: #fff;
-}
-
 
 .btnInfoWrapper{
     position: absolute;
@@ -148,6 +186,32 @@ li:hover .delBtn:hover{
 }
 .buttonActive{ /* add class to active button in app.js */
     border: 1px solid rgba(160, 81, 45, 0.329);
+}
+
+.underLines{
+    width: 490px;
+    height: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.underLinesHide{
+    display: none;
+}
+
+.firstLine{
+    width: 99.5%;
+    height: 3px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.253);
+    background-color: #fff;
+}
+
+.secondLine{
+    width: 98%;
+    height: 3px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.253);
+    background-color: #fff;
 }
 
 .todoText{
