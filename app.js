@@ -12,8 +12,6 @@ let todoList = [{
     done: false
 }]
 
-
-
 const deleteTodoItem = (todoId) => {
     setTodoList(todoList.filter(elem => elem.id !== +todoId))
 }
@@ -35,7 +33,6 @@ const changeItemStatus = (id, status) => {
 
 const itemRender = () => {
     list.innerText = ''
-
     todoList.forEach( item => {
         const li = document.createElement('li')
         const delBtn = document.createElement('div')
@@ -84,38 +81,34 @@ const itemRender = () => {
         li.append(label,itemText,itemInputWrapper,delBtn)
         list.append(li) 
     })    
-
     todoInput.value = ''
 }
 
-const editingItemClosure = (input, label, delBtn) => {    
+const editingItemClosure = (input, label, delBtn) => {	
     let lastClick = 0
-    return () => {
-        input.addEventListener('click', (e)=>{
-            e.stopPropagation()
-        }) 
+	return () => {	
+		const changItemValue = () => {
+			const itemValue = input.value.trim()
+			const parentId = +input.parentElement.parentElement.dataset.todoId
 
-        input.addEventListener('to', (e)=>{
-            // console.log(e)
-            if(input.contains(e.target)){
-                console.log(input.contains(e.target))
-            }
-        })
+			const newTodoList = todoList.map(item => parentId === item.id ? {...item, value: itemValue} : item)
+			setTodoList(newTodoList)
+		}
 
-        input.addEventListener('keydown', keyPressed => {
-            const itemValue = input.value.trim()
-            const parentId = +input.parentElement.parentElement.dataset.todoId
-            
-            if (keyPressed.key === 'Enter') {
-                const newTodoList = todoList.map(item => parentId === item.id ? {...item, value: itemValue} : item)
-                setTodoList(newTodoList)
-            }
-        })      
+		input.addEventListener('click', (e)=>{
+			e.stopPropagation()
+		}) 
+
+        input.addEventListener('blur', changItemValue)
+
+		input.addEventListener('keydown', keyPressed => {
+			if (keyPressed.key === 'Enter') {
+				changItemValue()
+			}
+		})      
 
         let isDblClick 
-        const d = Date.now();
-
-       
+        const d = Date.now();       
 
         d - lastClick < 400 ? isDblClick = true : isDblClick = false
         
@@ -161,15 +154,12 @@ const updateClearBtn = () => {
 
 clearBtn.addEventListener('click', clearCompleated)
 
-
 inputArrow.addEventListener('click', ()=>{      
     const isCheckedAllItems = todoList.every(item => {
        return item.done === true
     })
-
     changeAllItemsStatus(isCheckedAllItems)
-    changeInputArrowColor(isCheckedAllItems)
-    
+    changeInputArrowColor(isCheckedAllItems)    
 })
 
 const changeAllItemsStatus = (isCheckedAllItems) => {
