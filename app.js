@@ -181,21 +181,19 @@ const changeInputArrowColor = () => {
 }
 
 const updateTodoInfo = () => {   
-    // const itemsDone = todoList.filter(item=>{
-    //     return item.done === true
-    // })
-    // console.log(itemsDone)
-  
-    if(!todoList.length){
-        todoInfo.classList.add('todoInfoHide')
-        underLines.classList.add('underLinesHide')
-    } else if(todoList.length === 1){
-        itemNumber.textContent = `${todoList.length} item left`
+    const itemsDone = todoList.filter(item => item.done === false)
+
+    todoInfo.classList.add('todoInfoHide')
+    underLines.classList.add('underLinesHide')
+
+    if(itemsDone.length || todoList.length){
+        itemNumber.textContent = `${itemsDone.length} item left`      
         todoInfo.classList.remove('todoInfoHide')
-        underLines.classList.remove('underLinesHide')
-    } else {
-        itemNumber.textContent = `${todoList.length} items left`
-    }
+        underLines.classList.remove('underLinesHide') 
+        if(itemsDone.length > 1 || itemsDone.length === 0){
+            itemNumber.textContent = `${itemsDone.length} items left` 
+        }
+    }  
 }
 
 const updateInputArrow = () => {
