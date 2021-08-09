@@ -85,25 +85,26 @@ const itemRender = () => {
 }
 
 const editingItemClosure = (input, label, delBtn) => {	
+
+    const changeItemValue = () => {
+        const itemValue = input.value.trim()
+        const parentId = +input.parentElement.parentElement.dataset.todoId
+    
+        const newTodoList = todoList.map(item => parentId === item.id ? {...item, value: itemValue} : item)
+        setTodoList(newTodoList)
+    }
+
     let lastClick = 0
 	return () => {	
-		const changItemValue = () => {
-			const itemValue = input.value.trim()
-			const parentId = +input.parentElement.parentElement.dataset.todoId
-
-			const newTodoList = todoList.map(item => parentId === item.id ? {...item, value: itemValue} : item)
-			setTodoList(newTodoList)
-		}
-
 		input.addEventListener('click', (e)=>{
 			e.stopPropagation()
 		}) 
 
-        input.addEventListener('blur', changItemValue)
+        input.addEventListener('blur', changeItemValue)
 
 		input.addEventListener('keydown', keyPressed => {
 			if (keyPressed.key === 'Enter') {
-				changItemValue()
+				changeItemValue()
 			}
 		})      
 
