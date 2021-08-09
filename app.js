@@ -5,6 +5,9 @@ const underLines = document.querySelector('.underLines')
 const itemNumber = document.querySelector('.itemNumber')
 const inputArrow = document.querySelector('.arrow')
 const clearBtn = document.querySelector('.clearCompleatedBtn')
+const allBtn = document.querySelector('.allBtn')
+const activeBtn = document.querySelector('.activeBtn')
+const compleatedBtn = document.querySelector('.compleatedBtn')
 
 let todoList = [{
     value: 'hello',
@@ -155,12 +158,15 @@ const updateClearBtn = () => {
 
 clearBtn.addEventListener('click', clearCompleated)
 
-inputArrow.addEventListener('click', ()=>{      
-    const isCheckedAllItems = todoList.every(item => {
+const checkAllItems = arr => {
+    const isCheckedAllItems = arr.every(item => {
        return item.done === true
     })
-    changeAllItemsStatus(isCheckedAllItems)
-    changeInputArrowColor(isCheckedAllItems)    
+    return isCheckedAllItems
+}
+
+inputArrow.addEventListener('click', ()=>{    
+    changeAllItemsStatus(checkAllItems(todoList))
 })
 
 const changeAllItemsStatus = (isCheckedAllItems) => {
@@ -170,19 +176,25 @@ const changeAllItemsStatus = (isCheckedAllItems) => {
     setTodoList(newTodoList)
 }
 
-const changeInputArrowColor = isCheckedAllItems => {
-    inputArrow.classList[isCheckedAllItems ? 'remove': 'add']('arrowDark')
+const changeInputArrowColor = () => {
+   inputArrow.classList[checkAllItems(todoList) ? 'add': 'remove']('arrowDark')
 }
 
 const updateTodoInfo = () => {   
+    // const itemsDone = todoList.filter(item=>{
+    //     return item.done === true
+    // })
+    // console.log(itemsDone)
+  
     if(!todoList.length){
-        itemNumber.textContent = `${todoList.length} items left`
         todoInfo.classList.add('todoInfoHide')
         underLines.classList.add('underLinesHide')
-    } else {
+    } else if(todoList.length === 1){
         itemNumber.textContent = `${todoList.length} item left`
         todoInfo.classList.remove('todoInfoHide')
         underLines.classList.remove('underLinesHide')
+    } else {
+        itemNumber.textContent = `${todoList.length} items left`
     }
 }
 
@@ -197,7 +209,17 @@ const setTodoList = newTodoList => {
     updateClearBtn()
     updateTodoInfo()
     updateInputArrow()
+    changeInputArrowColor()
+
+    chooseCurrentSection()
+}
+
+
+const chooseCurrentSection = () => {
+    allBtn.classList.add('buttonActive')
 }
 
 setTodoList(todoList)
+
+
 
