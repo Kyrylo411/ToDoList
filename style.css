@@ -55,11 +55,11 @@ h1{
     cursor: pointer;
     -webkit-transform: rotate(90deg);
 	transform: rotate(90deg);
-    opacity: 0;
+    visibility: hidden;
 }
 
 .arrowVisible{
-    opacity: 1;
+    visibility: visible;
 }
 .arrowDark{
     color:#737373;
