@@ -10,6 +10,7 @@ const activeBtn = document.querySelector('.activeBtn')
 const compleatedBtn = document.querySelector('.compleatedBtn')
 
 allBtn.classList.add('buttonActive')
+let activeFilter = 'all'
 
 let todoList = [{
     value: 'hello',
@@ -17,37 +18,19 @@ let todoList = [{
     done: false
 }]
 
-const activeFilter = [
-    {
-        filterName: 'all',
-        active: true
-    },
-    {
-        filterName: 'active',
-        active: false
-    },
-    {
-        filterName: 'completed',
-        active: false
-    },
-]
-
 const infoButtons = [
-        {
-            buttonName: allBtn,
-            content: 'all',
-            active: true
-        },
-        {
-            buttonName: activeBtn,
-            content: 'active',
-            active: false
-        }, 
-        {
-            buttonName: compleatedBtn,
-            content: 'completed',
-            active: false
-        }
+    {
+        buttonName: allBtn,
+        id: 'all'
+    },
+    {
+        buttonName: activeBtn,
+        id: 'active'
+    }, 
+    {
+        buttonName: compleatedBtn,
+        id: 'completed'
+    }
 ]
 
 const deleteTodoItem = (todoId) => {
@@ -66,48 +49,45 @@ const changeItemStatus = (id, isChecked) => {
     setTodoList(todoList.map( item => id === item.id ? {...item, done: isChecked} : item))
 }
 
+const setActiveFilter = (newFilter) => {
+    activeFilter = newFilter
+}
 
-const setActiveFilter = ({target:{textContent}}) => {
+const setActiveFilterButton = ({target:{textContent}}) => {
     const clickedBtn = textContent.toLowerCase()
 
     infoButtons.forEach( btn => {
-        btn.active = false
         btn.buttonName.classList.remove('buttonActive')
-        if(clickedBtn === btn.content){
-            btn.active = true
+        if(clickedBtn === btn.id){
             btn.buttonName.classList.add('buttonActive')
-            activeFilter.forEach(filter => { 
-                filter.active = false
-                if(filter.filterName === btn.content){
-                    filter.active = true
-                }
-            })
+            setActiveFilter(btn.id)
         }
     })
     setTodoList(todoList)
 }
 
-allBtn.addEventListener('click', (e)=>setActiveFilter(e))
+allBtn.addEventListener('click', e => {
+    setActiveFilterButton(e)
+})
 
-activeBtn.addEventListener('click', (e)=>setActiveFilter(e))
+activeBtn.addEventListener('click', e => {
+    setActiveFilterButton(e)
+})
 
-compleatedBtn.addEventListener('click', (e)=>setActiveFilter(e))
+compleatedBtn.addEventListener('click', e => {
+    setActiveFilterButton(e)
+})
 
 const itemRender = () => {
     list.innerText = ''
 
     const todoListToRender = todoList.filter(todoItem => {
-        const currentFilter = activeFilter.find(filter => filter.active)
-
-        if(currentFilter.filterName === 'active'){
-            return !todoItem.done ? todoItem : null 
+        const filterMap = {
+            active: !todoItem.done ? todoItem : null,
+            completed: todoItem.done ? todoItem : null,
+            all: todoItem
         }
-        if(currentFilter.filterName === 'completed'){
-            return todoItem.done ? todoItem : null
-        }
-        if(currentFilter.filterName === 'all'){
-            return todoItem
-        }
+        return filterMap[activeFilter]
     })
 
     todoListToRender.forEach( item => {
@@ -129,11 +109,9 @@ const itemRender = () => {
         
         li.dataset.todoId = item.id       
     
-        const editCurrentTodoItem = editTodoItem(itemInput, label, delBtn)
+        const editCurrentTodoItem = makeTodoEditHandler(itemInput, label, delBtn)
 
-        li.addEventListener('click',() => {
-            editCurrentTodoItem()
-        })
+        li.addEventListener('click',editCurrentTodoItem)
 
         checkInput.addEventListener('change',(e) => {
             const id = +e.target.parentElement.parentElement.dataset.todoId
@@ -158,7 +136,7 @@ const itemRender = () => {
     todoInput.value = ''
 }
 
-const editTodoItem = (input, label, delBtn) => {	
+const makeTodoEditHandler = (input, label, delBtn) => {	
 
     const changeItemValue = () => {
         const itemValue = input.value.trim()
@@ -257,13 +235,11 @@ const updateInputArrow = () => {
 
 const setTodoList = newTodoList => {
     todoList = newTodoList
-
     
     updateClearCompletedBtn()
     updateTodoInfo()
     updateInputArrow()
-    changeInputArrowColor()
-    
+    changeInputArrowColor()    
     itemRender()
 }
 
