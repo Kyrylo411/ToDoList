@@ -10,7 +10,7 @@ const activeBtn = document.querySelector('.activeBtn')
 const compleatedBtn = document.querySelector('.compleatedBtn')
 
 allBtn.classList.add('buttonActive')
-let activeFilter = 'all'
+let activeFilter='all'
 
 let todoList = [{
     value: 'hello',
@@ -49,34 +49,34 @@ const changeItemStatus = (id, isChecked) => {
     setTodoList(todoList.map( item => id === item.id ? {...item, done: isChecked} : item))
 }
 
+
 const setActiveFilter = (newFilter) => {
     activeFilter = newFilter
+
+    selectActiveInfoButton()
+    itemRender()
 }
 
-const setActiveFilterButton = ({target:{textContent}}) => {
-    const clickedBtn = textContent.toLowerCase()
+const selectActiveInfoButton = () => {
+    infoButtons.forEach(btn => btn.buttonName.classList[btn.id === activeFilter ? 'add' : 'remove']('buttonActive'))
+}
 
-    infoButtons.forEach( btn => {
-        btn.buttonName.classList.remove('buttonActive')
-        if(clickedBtn === btn.id){
-            btn.buttonName.classList.add('buttonActive')
-            setActiveFilter(btn.id)
-        }
-    })
-    setTodoList(todoList)
+const changeActiveFilter = ({target:{textContent}}) => {
+    setActiveFilter(textContent.toLowerCase())
 }
 
 allBtn.addEventListener('click', e => {
-    setActiveFilterButton(e)
+    changeActiveFilter(e)
 })
 
 activeBtn.addEventListener('click', e => {
-    setActiveFilterButton(e)
+    changeActiveFilter(e)
 })
 
 compleatedBtn.addEventListener('click', e => {
-    setActiveFilterButton(e)
+    changeActiveFilter(e)
 })
+
 
 const itemRender = () => {
     list.innerText = ''
@@ -243,5 +243,5 @@ const setTodoList = newTodoList => {
     itemRender()
 }
 
-
+setActiveFilter(activeFilter)
 setTodoList(todoList)
